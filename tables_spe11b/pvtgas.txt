@@ -1,2 +1,0 @@
-DensityFun SpanWagnerCO2Density 1.0e5 5.e7 1e6 283.15 343.5 2.5
-ViscosityFun FenghourCO2Viscosity 1.0e5 5.e7 1e6 283.15 343.5 2.5

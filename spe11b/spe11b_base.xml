@@ -1,0 +1,524 @@
+<?xml version="1.0" ?>
+
+<Problem>
+
+  <Solvers>
+    <CompositionalMultiphaseFVM
+      name="compositionalMultiphaseFlow"
+      targetRegions="{ reservoir1, reservoir2, reservoir3, reservoir4, reservoir5, reservoir6, reservoir7 }"
+      discretization="fluidTPFA"
+      temperature="293"
+      isThermal="1"
+      initialDt="1e5"
+      targetPhaseVolFractionChangeInTimeStep="0.08"      
+      maxCompFractionChange="0.2"
+      logLevel="1"
+      useMass="1">
+      <NonlinearSolverParameters
+        newtonTol="1.0e-3"
+        maxTimeStepCuts="10"
+        maxSubSteps="20"
+        timeStepIncreaseIterLimit="0.3"
+        timeStepDecreaseIterLimit="0.6"
+        newtonMaxIter="15"/>
+      <LinearSolverParameters
+        solverType="fgmres"
+        preconditionerType="mgr"
+        krylovTol="1e-4"
+        logLevel="1"/>
+    </CompositionalMultiphaseFVM>
+  </Solvers>
+
+  <ElementRegions>
+    <CellElementRegion
+      name="reservoir1"
+      cellBlocks="{ 1_hexahedra }"
+      materialList="{ fluid, rock, relperm1, cappres1, thermalCond1, diffusion }"/>
+    <CellElementRegion
+      name="reservoir2"
+      cellBlocks="{ 2_hexahedra }"
+      materialList="{ fluid, rock, relperm2, cappres2, thermalCond2, diffusion }"/>
+    <CellElementRegion
+      name="reservoir3"
+      cellBlocks="{ 3_hexahedra }"
+      materialList="{ fluid, rock, relperm3, cappres3, thermalCond3, diffusion }"/>
+    <CellElementRegion
+      name="reservoir4"
+      cellBlocks="{ 4_hexahedra }"
+      materialList="{ fluid, rock, relperm4, cappres4, thermalCond4, diffusion }"/>
+    <CellElementRegion
+      name="reservoir5"
+      cellBlocks="{ 5_hexahedra }"
+      materialList="{ fluid, rock, relperm5, cappres5, thermalCond5, diffusion }"/>
+    <CellElementRegion
+      name="reservoir6"
+      cellBlocks="{ 6_hexahedra }"
+      materialList="{ fluid, rock, relperm6, cappres6, thermalCond6, diffusion }"/>
+    <CellElementRegion
+      name="reservoir7"
+      cellBlocks="{ 7_hexahedra }"
+      materialList="{ fluid, rock, relperm7, cappres7, thermalCond7, noDiffusion }"/>
+  </ElementRegions>
+
+  <NumericalMethods>
+    <FiniteVolume>
+      <TwoPointFluxApproximation
+        name="fluidTPFA"/>
+    </FiniteVolume>
+  </NumericalMethods>
+
+  <Constitutive>
+    <CO2BrinePhillipsThermalFluid
+      name="fluid"
+      phaseNames="{ gas, water }"
+      componentNames="{ co2, water }"
+      componentMolarWeight="{ 44e-3, 18e-3 }"
+      phasePVTParaFiles="{ ./tables_spe11b/pvtgas_thermal.txt, ./tables_spe11b/pvtliquid_thermal.txt }"
+      flashModelParaFile="./tables_spe11b/co2flash_thermal.txt"/>
+    <SolidInternalEnergy
+      name="rockInternalEnergy"
+      volumetricHeatCapacity="2.125e6"
+      referenceTemperature="0"
+      referenceInternalEnergy="0"/>
+
+    <CompressibleSolidConstantPermeability
+      name="rock"
+      solidModelName="nullSolid"
+      porosityModelName="rockPorosity"
+      permeabilityModelName="rockPerm"
+      solidInternalEnergyModelName="rockInternalEnergy"/>
+    <NullModel
+      name="nullSolid"/>
+    <PressurePorosity
+      name="rockPorosity"
+      defaultReferencePorosity="0.1"
+      referencePressure="1.0e5"
+      compressibility="4.5e-17"/>
+    <ConstantPermeability
+      name="rockPerm"
+      permeabilityComponents="{ 1.0e-12, 1.0e-12, 1.0e-12 }"/>
+
+    <!-- kr per facies -->
+    <BrooksCoreyRelativePermeability
+      name="relperm1"
+      phaseNames="{ gas, water }"
+      phaseMinVolumeFraction="{ 0.1, 0.32 }"
+      phaseRelPermExponent="{ 1.5, 1.5 }"
+      phaseRelPermMaxValue="{ 1.0, 1.0 }"/>
+    <BrooksCoreyRelativePermeability
+      name="relperm2"
+      phaseNames="{ gas, water }"
+      phaseMinVolumeFraction="{ 0.1, 0.14 }"
+      phaseRelPermExponent="{ 1.5, 1.5 }"
+      phaseRelPermMaxValue="{ 1.0, 1.0 }"/>
+    <BrooksCoreyRelativePermeability
+      name="relperm3"
+      phaseNames="{ gas, water }"
+      phaseMinVolumeFraction="{ 0.1, 0.12 }"
+      phaseRelPermExponent="{ 1.5, 1.5 }"
+      phaseRelPermMaxValue="{ 1.0, 1.0 }"/>
+    <BrooksCoreyRelativePermeability
+      name="relperm4"
+      phaseNames="{ gas, water }"
+      phaseMinVolumeFraction="{ 0.1, 0.12 }"
+      phaseRelPermExponent="{ 1.5, 1.5 }"
+      phaseRelPermMaxValue="{ 1.0, 1.0 }"/>
+    <BrooksCoreyRelativePermeability
+      name="relperm5"
+      phaseNames="{ gas, water }"
+      phaseMinVolumeFraction="{ 0.1, 0.12 }"
+      phaseRelPermExponent="{ 1.5, 1.5 }"
+      phaseRelPermMaxValue="{ 1.0, 1.0 }"/>
+    <BrooksCoreyRelativePermeability
+      name="relperm6"
+      phaseNames="{ gas, water }"
+      phaseMinVolumeFraction="{ 0.1, 0.10 }"
+      phaseRelPermExponent="{ 1.5, 1.5 }"
+      phaseRelPermMaxValue="{ 1.0, 1.0 }"/>
+    <!-- impermeable model -->
+    <BrooksCoreyRelativePermeability
+      name="relperm7"
+      phaseNames="{ gas, water }"
+      phaseMinVolumeFraction="{ 0.1, .1 }"
+      phaseRelPermExponent="{ 1.5, 1.5 }"
+      phaseRelPermMaxValue="{ 0.0001, 0.0001 }"/>
+
+    <ConstantDiffusion
+      name="diffusion"
+      phaseNames="{ gas, water }"
+      defaultPhaseDiffusivityMultipliers="{ 20, 1 }"
+      diffusivityComponents="{ 1e-9, 1e-9, 1e-9 }"/>
+    <ConstantDiffusion
+      name="noDiffusion"
+      phaseNames="{ gas, water }"
+      defaultPhaseDiffusivityMultipliers="{ 0, 0 }"
+      diffusivityComponents="{ 0, 0, 0 }"/>
+    
+    <!-- cap per facies         -->
+    <!-- cap per facies -->
+    <BrooksCoreyCapillaryPressure
+      name="cappres1"
+      phaseNames="{gas,water}"
+      capPressureEpsilon="1e-3"
+      phaseCapPressureExponentInv="{1., 1.5}"
+      phaseEntryPressure="{0., 193531.4}"
+      phaseMinVolumeFraction="{ 0.1, 0.32 }" />
+    <BrooksCoreyCapillaryPressure
+      name="cappres2"
+      phaseNames="{gas,water}"
+      capPressureEpsilon="1e-3"
+      phaseCapPressureExponentInv="{1., 1.5}"
+      phaseEntryPressure="{0., 8655.0}"
+      phaseMinVolumeFraction="{ 0.1, 0.14 }" />
+    <BrooksCoreyCapillaryPressure
+      name="cappres3"
+      phaseNames="{gas,water}"
+      capPressureEpsilon="1e-3"
+      phaseCapPressureExponentInv="{1., 1.5}"
+      phaseEntryPressure="{0., 6120.}"
+      phaseMinVolumeFraction="{ 0.1, 0.12 }" />
+    <BrooksCoreyCapillaryPressure
+      name="cappres4"
+      phaseNames="{gas,water}"
+      capPressureEpsilon="1e-3"
+      phaseCapPressureExponentInv="{1., 1.5}"
+      phaseEntryPressure="{0., 3870.6}"
+      phaseMinVolumeFraction="{ 0.1, 0.12 }" />
+    <BrooksCoreyCapillaryPressure
+      name="cappres5"
+      phaseNames="{gas,water}"
+      capPressureEpsilon="1e-3"
+      phaseCapPressureExponentInv="{1., 1.5}"
+      phaseEntryPressure="{0., 3060.0}"
+      phaseMinVolumeFraction="{ 0.1, 0.12 }" />
+    <BrooksCoreyCapillaryPressure
+      name="cappres6"
+      phaseNames="{gas,water}"
+      capPressureEpsilon="1e-3"
+      phaseCapPressureExponentInv="{1., 1.5}"
+      phaseEntryPressure="{0., 2560.2}"
+      phaseMinVolumeFraction="{ 0.1, 0.1 }" />
+    <BrooksCoreyCapillaryPressure
+      name="cappres7"
+      phaseNames="{gas,water}"
+      capPressureEpsilon="1e-3"
+      phaseCapPressureExponentInv="{1., 1.5}"
+      phaseEntryPressure="{0.0, 0.0}"
+      phaseMinVolumeFraction="{0.1, 0.12}" />
+
+    <MultiPhaseVolumeWeightedThermalConductivity
+      name="thermalCond1"
+      phaseNames="{gas, water }"
+      phaseThermalConductivity="{ 0.09, 0.65 }"
+      rockThermalConductivityComponents="{ 1.9, 1.9, 1.9 }"/>
+    <MultiPhaseVolumeWeightedThermalConductivity
+      name="thermalCond2"
+      phaseNames="{gas, water}"
+      phaseThermalConductivity="{ 0.09, 0.65 }"
+      rockThermalConductivityComponents="{ 1.25, 1.25, 1.25 }"/>
+    <MultiPhaseVolumeWeightedThermalConductivity
+      name="thermalCond3"
+      phaseNames="{gas, water}"
+      phaseThermalConductivity="{ 0.09, 0.65 }"
+      rockThermalConductivityComponents="{ 1.25, 1.25, 1.25 }"/>
+    <MultiPhaseVolumeWeightedThermalConductivity
+      name="thermalCond4"
+      phaseNames="{gas, water}"
+      phaseThermalConductivity="{ 0.09, 0.65 }"
+      rockThermalConductivityComponents="{ 1.25, 1.25, 1.25 }"/>
+    <MultiPhaseVolumeWeightedThermalConductivity
+      name="thermalCond5"
+      phaseNames="{gas, water}"
+      phaseThermalConductivity="{ 0.09, 0.65 }"
+      rockThermalConductivityComponents="{ 0.92, 0.92, 0.92 }"/>
+    <MultiPhaseVolumeWeightedThermalConductivity
+      name="thermalCond6"
+      phaseNames="{gas, water}"
+      phaseThermalConductivity="{ 0.09, 0.65 }"
+      rockThermalConductivityComponents="{ 0.26, 0.26, 0.26 }"/>
+    <MultiPhaseVolumeWeightedThermalConductivity
+      name="thermalCond7"
+      phaseNames="{gas, water}"
+      phaseThermalConductivity="{ 0.09, 0.65 }"
+      rockThermalConductivityComponents="{ 2.0, 2.0, 2.0 }"/>
+  </Constitutive>
+
+  <FieldSpecifications>
+    <HydrostaticEquilibrium
+      name="equil"
+      objectPath="ElementRegions/reservoir*"
+      datumElevation="-900"
+      datumPressure="3e7"
+      initialPhaseName="water"
+      componentNames="{ co2, water }"
+      componentFractionVsElevationTableNames="{ initCO2CompFracTable,
+                                                initWaterCompFracTable }"
+      temperatureVsElevationTableName="initTempTable"/>
+
+    <FieldSpecification
+      name="topTemperature"
+      objectPath="ElementRegions"
+      fieldName="temperature"
+      scale="313.15"
+      setNames="{ top }"/>
+    <FieldSpecification
+      name="bottomTemperature"
+      objectPath="ElementRegions"
+      fieldName="temperature"
+      scale="343.15"
+      setNames="{ bottom }"/>
+
+    <FieldSpecification
+      name="permx1"
+      initialCondition="1"
+      component="0"
+      setNames="{ all }"
+      objectPath="ElementRegions/reservoir1"
+      fieldName="rockPerm_permeability"
+      scale="1e-16"/>
+    <FieldSpecification
+      name="permy1"
+      initialCondition="1"
+      component="1"
+      setNames="{ all }"
+      objectPath="ElementRegions/reservoir1"
+      fieldName="rockPerm_permeability"
+      scale="1e-16"/>
+    <FieldSpecification
+      name="permz1"
+      initialCondition="1"
+      component="2"
+      setNames="{ all }"
+      objectPath="ElementRegions/reservoir1"
+      fieldName="rockPerm_permeability"
+      scale="1e-17"/>
+
+    <FieldSpecification
+      name="permx2"
+      initialCondition="1"
+      component="0"
+      setNames="{ all }"
+      objectPath="ElementRegions/reservoir2"
+      fieldName="rockPerm_permeability"
+      scale="1e-13"/>
+    <FieldSpecification
+      name="permy2"
+      initialCondition="1"
+      component="1"
+      setNames="{ all }"
+      objectPath="ElementRegions/reservoir2"
+      fieldName="rockPerm_permeability"
+      scale="1e-13"/>
+    <FieldSpecification
+      name="permz2"
+      initialCondition="1"
+      component="2"
+      setNames="{ all }"
+      objectPath="ElementRegions/reservoir2"
+      fieldName="rockPerm_permeability"
+      scale="1e-14"/>
+    
+    <FieldSpecification
+      name="permx3"
+      initialCondition="1"
+      component="0"
+      setNames="{ all }"
+      objectPath="ElementRegions/reservoir3"
+      fieldName="rockPerm_permeability"
+      scale="2e-13"/>
+    <FieldSpecification
+      name="permy3"
+      initialCondition="1"
+      component="1"
+      setNames="{ all }"
+      objectPath="ElementRegions/reservoir3"
+      fieldName="rockPerm_permeability"
+      scale="2e-13"/>
+    <FieldSpecification
+      name="permz3"
+      initialCondition="1"
+      component="2"
+      setNames="{ all }"
+      objectPath="ElementRegions/reservoir3"
+      fieldName="rockPerm_permeability"
+      scale="2e-14"/>
+    
+    <FieldSpecification
+      name="permx4"
+      initialCondition="1"
+      component="0"
+      setNames="{ all }"
+      objectPath="ElementRegions/reservoir4"
+      fieldName="rockPerm_permeability"
+      scale="5e-13"/>
+    <FieldSpecification
+      name="permy4"
+      initialCondition="1"
+      component="1"
+      setNames="{ all }"
+      objectPath="ElementRegions/reservoir4"
+      fieldName="rockPerm_permeability"
+      scale="5e-13"/>
+    <FieldSpecification
+      name="permz4"
+      initialCondition="1"
+      component="2"
+      setNames="{ all }"
+      objectPath="ElementRegions/reservoir4"
+      fieldName="rockPerm_permeability"
+      scale="5e-14"/>
+
+    <FieldSpecification
+      name="permx5"
+      initialCondition="1"
+      component="0"
+      setNames="{ all }"
+      objectPath="ElementRegions/reservoir5"
+      fieldName="rockPerm_permeability"
+      scale="1e-12"/>
+    <FieldSpecification
+      name="permy5"
+      initialCondition="1"
+      component="1"
+      setNames="{ all }"
+      objectPath="ElementRegions/reservoir5"
+      fieldName="rockPerm_permeability"
+      scale="1e-12"/>
+    <FieldSpecification
+      name="permz5"
+      initialCondition="1"
+      component="2"
+      setNames="{ all }"
+      objectPath="ElementRegions/reservoir5"
+      fieldName="rockPerm_permeability"
+      scale="1e-13"/>
+
+    <FieldSpecification
+      name="permx6"
+      initialCondition="1"
+      component="0"
+      setNames="{ all }"
+      objectPath="ElementRegions/reservoir6"
+      fieldName="rockPerm_permeability"
+      scale="2e-12"/>
+    <FieldSpecification
+      name="permy6"
+      initialCondition="1"
+      component="1"
+      setNames="{ all }"
+      objectPath="ElementRegions/reservoir6"
+      fieldName="rockPerm_permeability"
+      scale="2e-12"/>
+    <FieldSpecification
+      name="permz6"
+      initialCondition="1"
+      component="2"
+      setNames="{ all }"
+      objectPath="ElementRegions/reservoir6"
+      fieldName="rockPerm_permeability"
+      scale="2e-13"/>
+
+    <FieldSpecification
+      name="permx7"
+      initialCondition="1"
+      component="0"
+      setNames="{ all }"
+      objectPath="ElementRegions/reservoir7"
+      fieldName="rockPerm_permeability"
+      scale="1e-26"/>
+    <FieldSpecification
+      name="permy7"
+      initialCondition="1"
+      component="1"
+      setNames="{ all }"
+      objectPath="ElementRegions/reservoir7"
+      fieldName="rockPerm_permeability"
+      scale="1e-26"/>
+    <FieldSpecification
+      name="permz7"
+      initialCondition="1"
+      component="2"
+      setNames="{ all }"
+      objectPath="ElementRegions/reservoir7"
+      fieldName="rockPerm_permeability"
+      scale="1e-26"/>
+    
+    <FieldSpecification
+      beginTime="0.01"
+      endTime="1.5768e9"
+      name="sourceTemperature1"
+      setNames="{ thermalSource1 }"
+      objectPath="ElementRegions/reservoir5"
+      fieldName="temperature"
+      scale="283.15" />
+    <SourceFlux
+      name="sourceTerm1"
+      objectPath="ElementRegions/reservoir5"
+      component="0"
+      functionName="totalRateTable1"
+      scale="1"
+      setNames="{ thermalSource1 }"/>
+    <FieldSpecification
+      beginTime="7.8840000001e8"
+      endTime="1.5768e9"
+      name="sourceTemperature2"
+      setNames="{ thermalSource2 }"
+      objectPath="ElementRegions/reservoir5"
+      fieldName="temperature"
+      scale="283.15" />
+    <SourceFlux
+      name="sourceTerm2"
+      objectPath="ElementRegions/reservoir5"
+      component="0"
+      functionName="totalRateTable2"
+      scale="1"
+      setNames="{ thermalSource2 }"/>
+
+  </FieldSpecifications>
+
+  <Functions>
+    <TableFunction
+      name="initCO2CompFracTable"
+      coordinates="{ -1200, 0 }"
+      values="{ 0.000001, 0.000001 }"/>
+    <TableFunction
+      name="initWaterCompFracTable"
+      coordinates="{ -1200, 0 }"
+      values="{ 0.999999, 0.999999 }"/>
+    <TableFunction
+      name="initTempTable"
+      coordinates="{ -1200, 0 }"
+      values="{ 343.15, 313.15 }"/>
+
+    <TableFunction
+      name="totalRateTable1"
+      inputVarNames="{time}"
+      coordinates="{ -1e11, 0, 7.884e8, 1.5768e9, 1.576800001e9, 3.153600e10}"
+      values="{ 0, -0.035, -0.035, -0.035, 0, 0}"
+      interpolation="lower"/>
+    <TableFunction
+      name="totalRateTable2"
+      inputVarNames="{time}"
+      coordinates="{ -1e11, 0, 7.8839999e8, 7.884e8, 1.5768e9, 1.576800001e9, 3.153600e10}"
+      values="{ 0., 0., 0., -0.035, -0.035, 0, 0}"
+      interpolation="lower"/>
+
+  </Functions>
+  
+  <Tasks>
+    <CompositionalMultiphaseStatistics
+      name="compflowStatistics"
+      flowSolverName="compositionalMultiphaseFlow"
+      logLevel="1"
+      computeCFLNumbers="1"
+      computeRegionStatistics="1"/>
+  </Tasks>
+
+  <Outputs>
+    <VTK
+      name="vtkOutput"/>
+    <Restart
+      name="restartOutput"/>
+  </Outputs>
+
+</Problem>
