@@ -18,11 +18,9 @@ Each of them have the following build ARG
 |:---------------------|:----------------------------------|:----------------------------------|
 | `DOCKER_ROOT_IMAGE`  | name and tag of the CI image used | **Required**                      |
 | `GEOS_TPL_DIR`       | tpl install dir from CI image     | Set from CI image (see below)     |
-| `GEOS_CASE_DIR`      | path to copy generic input files  | `/opt/GEOS/cases`                 |
 | `GEOS_SRC_DIR`       | path to geos sources              | `/tmp/src`                        |
 | `GEOS_BUILD_DIR`     | path to build dir                 | `${GEOS_SRC_DIR}/build`           |
 | `GEOS_INSTALL_DIR`   | path to install geos binaries     | `/opt/GEOS/GEOS-version`          |
-| `EXE`                | path to geos executable           | `${GEOS_INSTALL\DIR}/bin/geosx`   | 
 
 *Only* `DOCKER_ROOT_IMAGE` is intended to be set. All other variables should preferably be lest to their default values.
 
@@ -61,13 +59,13 @@ docker run -v ${LOCAL_CASE_PATH}/cases/spe11b:/opt/GEOS/cases --rm jafranc/geos-
 
 ```
 
-Note that `/opt/GEOS/cases` is default for `${GEOS_CASE_DIR}`. If specified otherwise in the build stage, it should be adjust.
+Note that `/opt/GEOS/cases` is default for env `${GEOS_CASE_DIR}` but can be set to another destination via `-e <path>` docker run args.
 The third instuction line link the case of interest to the generic name 'case.xml' so that the docker image can be instantiated and ran as it is.
 Note that it can be ran interatively and the call args can be modified.
 
 ```bash
 
-docker run -it --entrypoint /bin/bash -v ${LOCAL_CASE_PATH}/cases/spe11b:/opt/GEOS/cases --rm jafranc/geos-35a789a
+docker run -it --entrypoint /bin/bash -v ${LOCAL_CASE_PATH}/cases/spe11b:/opt/GEOS/cases --rm spe11-geos-docker
 
 ```
 
