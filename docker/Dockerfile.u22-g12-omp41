@@ -5,6 +5,7 @@
 #               /opt
 #                   |- GEOS_TPL/
 #                   |- GEOS/GEOS-version
+#	            |- GEOS/cases
 #
 # install GEOSX in /opt/GEOSX with HYPRE ON (hardcoded)
 # build-arg:
@@ -40,9 +41,9 @@ RUN apt-get -y install \
 
 ARG GEOS_SRC_DIR=/tmp/src
 ARG GEOS_BUILD_DIR=${GEOS_SRC_DIR}/build
-ARG GEOS_CASE_DIR=/opt/GEOS/cases
 ARG GEOS_INSTALL_DIR=/opt/GEOS/GEOS-version
-ARG EXE=${GEOS_INSTALL_DIR}/bin/geosx
+ENV GEOS_CASE_DIR=/opt/GEOS/cases
+ENV EXE=${GEOS_INSTALL_DIR}/bin/geosx
 
 
 RUN git clone https://github.com/GEOS-DEV/GEOS.git ${GEOS_SRC_DIR}
@@ -63,6 +64,7 @@ RUN mv ${GEOS_SRC_DIR}/inputFiles/ ${GEOS_CASE_DIR}
 RUN [ -e /tmp/src ] && rm -rf /tmp/src
 WORKDIR ${GEOS_CASE_DIR}
 
-CMD ["mpirun","--allow-run-as-root" ,"-np", "1","${EXE}", "-i","${GEOS_CASE_DIR}/case.xml","-x","1","-y","1","-z","1"]
+#ENTRYPOINT ["mpirun"]
+CMD ${MPIEXEC} --allow-run-as-root -np 1 ${EXE} -i ${GEOS_CASE_DIR}/case.xml -x 1 -y 1 -z 1
 
                                      
