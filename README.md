@@ -55,17 +55,20 @@ Eventually one wants to run the cases present in this repo,
 export LOCAL_CASE_PATH=<path-to-local>
 git clone https://github.com/jafranc/spe11-csp.geos ${LOCAL_CASE_PATH}
 cd ${LOCAL_CASE_PATH} && cd cases/spe11b && ln -s spe11b_vti_source_00840x00120.xml case.xml
-docker run -v ${LOCAL_CASE_PATH}/cases/spe11b:/opt/GEOS/cases --rm jafranc/geos-35a789a
+docker run --user "$(id -u):$(id -g)" -v ${LOCAL_CASE_PATH}/cases/spe11b:/opt/GEOS/cases --rm jafranc/geos-35a789a
 
 ```
 
 Note that `/opt/GEOS/cases` is default for env `${GEOS_CASE_DIR}` but can be set to another destination via `-e <path>` docker run args.
 The third instuction line link the case of interest to the generic name 'case.xml' so that the docker image can be instantiated and ran as it is.
-Note that it can be ran interatively and the call args can be modified.
+
+Note that `--user` instruction while not mandatory, allows to run the docker as the current user:group. Then the outputs will be assigned to your uid:gid and no rights manipulation will be required.
+
+Note that it can be ran interactively and the call args can be modified.
 
 ```bash
 
-docker run -it --entrypoint /bin/bash -v ${LOCAL_CASE_PATH}/cases/spe11b:/opt/GEOS/cases --rm spe11-geos-docker
+docker run -it --user "$(id -u):$(id -g)" --entrypoint /bin/bash -v ${LOCAL_CASE_PATH}/cases/spe11b:/opt/GEOS/cases --rm spe11-geos-docker
 
 ```
 
