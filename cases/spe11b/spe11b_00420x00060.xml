@@ -1,0 +1,89 @@
+<?xml version="1.0" ?>
+
+<Problem>
+
+  <Included>
+    <File name="spe11b_vti_source_base.xml" />
+  </Included>
+
+  <Mesh>
+    <VTKMesh
+      name="mesh"
+      file="mesh/spe11b_00420x00060.vti"
+      regionAttribute="faciesIndex"
+      partitionRefinement="5"
+      logLevel="5">
+    </VTKMesh>
+  </Mesh>
+
+  <Geometry>
+    <Box
+      name="top"
+      xMin="{   -0.01, -0.01, 1189.99 }"
+      xMax="{ 8400.01,  1.01, 1200.01 }" />
+    <Box
+      name="bottom"
+      xMin="{   -0.01, -0.01, -0.01 }"
+      xMax="{ 8400.01,  1.01, 10.01 }" />
+  </Geometry> 
+
+  <Functions>
+    <TableFunction
+      name="bufferVolume"
+      inputVarNames="{ time }"
+      coordinates="{ -1e11 }"
+      values="{ 1.000400e+06 }"
+      interpolation="lower" />
+  </Functions>
+    
+  <Events
+    minTime="-31556952000"
+    maxTime="31556952000">
+
+    <PeriodicEvent
+      name="outputs1"
+      beginTime="0"
+      endTime="3153600000"
+      timeFrequency="315360000"
+      targetExactTimestep="1"
+      target="/Outputs/vtkOutput" />
+    <PeriodicEvent
+      name="outputs2"
+      beginTime="3153600000"
+      timeFrequency="3153600000"
+      targetExactTimestep="1"
+      target="/Outputs/vtkOutput" />
+
+    <PeriodicEvent
+      name="stats"
+      timeFrequency="315360000"
+      beginTime="0"
+      targetExactTimestep="1"
+      target="/Tasks/compflowStatistics" /> 
+
+    <PeriodicEvent
+      name="solverApplications0"
+      beginTime="-31536000000"
+      maxEventDt="157680000"
+      endTime="0"
+      target="/Solvers/compositionalMultiphaseFlow" />
+    <PeriodicEvent
+      name="solverApplications1"
+      beginTime="0"
+      maxEventDt="3600"
+      endTime="630720"
+      target="/Solvers/compositionalMultiphaseFlow" />      
+    <PeriodicEvent
+      name="solverApplications2"
+      beginTime="630720"
+      maxEventDt="6307200"
+      endTime="3153600000"
+      target="/Solvers/compositionalMultiphaseFlow" />
+    <PeriodicEvent
+      name="solverApplications3"
+      beginTime="3153600000"
+      maxEventDt="157680000"
+      target="/Solvers/compositionalMultiphaseFlow" />  
+  </Events>
+
+</Problem>
