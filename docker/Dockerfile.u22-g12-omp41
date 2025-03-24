@@ -44,6 +44,7 @@ ARG GEOS_BUILD_DIR=${GEOS_SRC_DIR}/build
 ARG GEOS_INSTALL_DIR=/opt/GEOS/GEOS-version
 ENV GEOS_CASE_DIR=/opt/GEOS/cases
 ENV EXE=${GEOS_INSTALL_DIR}/bin/geosx
+ENV NP=4
 
 
 RUN git clone https://github.com/GEOS-DEV/GEOS.git ${GEOS_SRC_DIR}
@@ -65,6 +66,6 @@ RUN [ -e /tmp/src ] && rm -rf /tmp/src
 WORKDIR ${GEOS_CASE_DIR}
 
 #ENTRYPOINT ["mpirun"]
-CMD ${MPIEXEC} --allow-run-as-root -np 1 ${EXE} -i ${GEOS_CASE_DIR}/case.xml -x 1 -y 1 -z 1
+CMD ${MPIEXEC} --allow-run-as-root -np ${NP} ${EXE} -i ${GEOS_CASE_DIR}/case.xml 
 
                                      
