@@ -46,7 +46,16 @@ spe11-geos-docker                 latest    7fedebd52347   3 days ago      5.84G
 
 ```
 
-*This first step can be bypassed by pulling the uploaded geos images 'docker pull jafranc/geos-35a789a:latest'.*
+*This first step can be bypassed by pulling the uploaded geos images 'docker pull jafranc/geos-35a789a:latest'. 
+The internal and external ENV var that goes with this image are
+
+| ARG                  | Definition                        | Default                           |
+|:---------------------|:----------------------------------|:----------------------------------|
+| `NP`                 | number of MPI tasks               | 4                                 |
+| `GEOS_CASE_DIR`      | path to internal case dir         | `/opt/GEOS/cases`                 |
+| `EXE`                | path to exe                       | `${GEOS_INSTALL_DIR}/bin/geosx`   |
+
+only `NP` is intended to be overwritten at instantiation. Other are for internal or interactive use.
 
 Eventually one wants to run the cases present in this repo, 
 
@@ -55,7 +64,7 @@ Eventually one wants to run the cases present in this repo,
 export LOCAL_CASE_PATH=<path-to-local>
 git clone https://github.com/jafranc/spe11-csp.geos ${LOCAL_CASE_PATH}
 cd ${LOCAL_CASE_PATH} && cd cases/spe11b && ln -s spe11b_vti_source_00840x00120.xml case.xml
-docker run --user "$(id -u):$(id -g)" -v ${LOCAL_CASE_PATH}/cases/spe11b:/opt/GEOS/cases --rm jafranc/geos-35a789a
+docker run --user "$(id -u):$(id -g)" -e NP=8 -v ${LOCAL_CASE_PATH}/cases/spe11b:/opt/GEOS/cases --rm jafranc/geos-35a789a
 
 ```
 
